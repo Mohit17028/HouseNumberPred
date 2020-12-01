@@ -24,9 +24,6 @@ def load_model():
     return inf_model
 
 
-model = load_model()
-
-
 # image -> tensor
 def transform_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes))
@@ -37,18 +34,21 @@ def transform_image(image_bytes):
     return t_image
 
 
+loaded_modal = load_model()
+
+
 # predict
-def get_prediction(loaded_modal):
-    image_bytes = "bd.jpg"
-    image_tensor = transform_image(image_bytes=image_bytes)
+def get_prediction(image_tensor):
+    global loaded_modal
     length_digits, output_digits = loaded_modal(image_tensor)
     _, length_digit = length_digits.topk(1, dim=1)
-    digits_top_class = ""
+    print(length_digit)
+    digits_top_class = []
     for i in range(5):
         _, _digits_top_class = output_digits[i].topk(1, dim=1)
-        _digits_top_class -= 1
-        if _digits_top_class == 0:
-            break
-        digits_top_class = digits_top_class+str(_digits_top_class)
+        digits_top_class.append(_digits_top_class)
 
-    return length_digit, digits_top_class
+    digits_top_class = [(i.item()-1) for i in digits_top_class if i != 0]
+    digits_top_class = [str(i) for i in digits_top_class]
+    digits_top_class = ''.join(digits_top_class)
+    return length_digit.item(), digits_top_class
