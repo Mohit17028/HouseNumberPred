@@ -16,7 +16,8 @@ test_transforms = transforms.Compose([
 
 def load_model():
     device = 'cpu'
-    classifier = torch.load(os.pwd() + 'models\\' + 'SVHN_model_checkpoint.tar', map_location=device)
+    print(os.getcwd())
+    classifier = torch.load("D:\HouseNumberPred\models\SVHN_model_checkpoint.tar", map_location=device)
     inf_model = Model()
     inf_model.load_state_dict(classifier['model_state_dict'])
     inf_model.eval()
